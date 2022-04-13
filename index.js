@@ -16,20 +16,15 @@ const {readdir} = path;
 // todo -7) buscar archivo(s) de extension .md 
 
 
-
-// console.log(__dirname.red) // directorio
-// console.log(__filename.green) //directorio + archivo
-// console.log(path.basename(__filename).blue) // archivo
-
     //  C:\Users\isisd\3D Objects\Laboratoria\Proyecto 4\..\mock\mock.md
     // ./mock/mock.md
+    // mock\otracosa.md
 
 
-const app = () => {
-
-  welcomeUser();
+function mdLinks(answer){
+  welcomeUser(answer);
 } 
-app();
+mdLinks();
 
 
 

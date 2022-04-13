@@ -1,112 +1,74 @@
 const colors = require("colors");
 const fs = require("fs");
-const { readdir, readFile, existsSync } = fs;
+const { existsSync, readFileSync } = fs;
 const process = require("process");
 const { stdin, stdout, exit } = process;
 const readline = require("readline");
 const path = require("path");
-const { isAbsolute, join, extname, dirname, basename } = path;
+const { isAbsolute, extname, resolve } = path;
 
-function welcomeUser() {
-  // console.clear()
-  console.log("====================".blue);
-  console.log(" WELCOME TO MD LINKS ".green);
-  console.log("====================".blue);
-  stdout.write(`tu directorio actual es: ${__dirname} \n`.bold);
+const regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_\+.~#?&\/\/=]*)/g;
 
-  function handlePath() {
-    let interface = readline.createInterface(stdin, stdout);
-
-    interface.question("Inserta una ruta absoluta para evaluar \n ".bgBlue,function (respuesta) {
-        // evaluamos si la ruta existe o no
-        //exitsSync evalua tanto absoluto como realtivo 
-        if (!existsSync(respuesta)) {
-            stdout.write('No es una ruta válida')
-            exit()
-        } 
-
-        if(!isAbsolute(respuesta) === true){
-            console.log('esta no es una ruta absoluta')
-            respuesta = `${__dirname}\\${respuesta}`
-            // stdout.write('No es una ruta válida, debe ser absoluta')
-            // exit()
-        }else{
-            console.log('la ruta si era abs')
-        }
-
-        console.log("=>".green + " " + respuesta);
-
-        let file;
-        
-        if(respuesta.includes('.md')){
-            readFile(respuesta, "utf-8", (data, error) => {
-                if (error) {
-                  console.log(error);
-                } else {
-                  stdout.write(data);
-                }
-              });
-        }else{
-
-        readdir(respuesta, (error, archvivos) => {
-          error = new Error();
-            console.log(typeof(archvivos))
-          archvivos.forEach((archivo) => {
-            console.log("archivos => " + archivo);
-
-            if (extname(archivo) === ".md") {
-              file = archivo;
-              stdout.write("=>" + file.bgYellow + "\n");
-            }
-          });
-
-          console.log(file.green);
-
-          readFile(file, "utf-8", (data, error) => {
-            if (error) {
-              console.log(error);
-            } else {
-              stdout.write("leyendo...".blue + data + "\n");
-            }
-          });
-        });
-
-    }
-
-
-
-
-        interface.close();
-      }
-    );
+function welcomeUser(answer) {
+  
+  function welcome() {
+    console.log("===================================".blue.bgBlack);
+    console.log(`      WELCOME TO IA-MD-LINKS       `.white.bgGreen);
+    console.log("===================================".blue.bgBlack);
+    stdout.write(`tu directorio actual es: ${__dirname.cyan} \n`.bold);
   }
-  handlePath();
+  welcome();
+  
+  let interface = readline.createInterface(stdin, stdout);
+  interface.question(
+    "Ingresa la ruta para evaluar => ".blue.bold,
+    function (answer) {
+    
+      // evaluamos si la ruta existe o no // exitsSync evalua tanto absoluto como realtivo
+      if (!existsSync(answer)) {
+        stdout.write("No es una ruta válida".red);
+        exit();
+      }
+      if (!isAbsolute(answer) === true) {
+        answer = resolve(answer) // resuelve el path abs de cualquier archivo
+      } else {
+        console.log("la ruta si era abs, continue joven");
+      }
+      // si la respuesta incluye un .md lee el archivo directamente
+      if (answer.includes(".md")) {
+          let mdFile = readFileSync(answer, "utf8");
+              if(!mdFile.includes('https','http')) 
+              console.log('este archivo no contiene links'.red)
+              else{
+              console.log(mdFile = mdFile.match(regex) ); // array con links
+              console.log(mdFile.length)  // cuantos links hay
+            }
+      } else {
+        // si es un directorio leelo y saca los archivos que contengan una extension .md
+        let directory = fs.readdirSync(answer)
+
+        directory.forEach( archivo => {
+          if(extname(archivo) === ".md"){
+            console.log('leyendo...' + archivo.blue.bold)
+              let file = readFileSync(archivo, "utf-8")
+
+              if(!file.includes('https','http'))
+              console.log('este archivo no contiene links'.red)
+              else {
+              file = file.match(regex) 
+              console.log(file);  // array con links
+              console.log(file.length)  // cuantos links hay
+            }
+          }
+        })
+      }
+      //acaba el programa!
+      interface.close();
+    }
+  );
 }
 
 module.exports = {
   welcomeUser,
 };
 
-// rl code
-// let read=readline.createInterface({
-//     input: process.stdin,
-//     output: process.stdout
-// })
-
-// call readline
-// var readline = require('readline');
-
-// var rl = readline.createInterface(process.stdin, process.stdout);
-// rl.question("How do you feel today? ", function(answer) {
-// // ask a question to interact with user.
-
-// console.log("Have a great day!");
-
-// // close the program
-// rl.close();
-// });
-
-// interface.on("line", function (input) {
-//   console.log(input + "prueba");
-//   const ruta = input;
-// });
