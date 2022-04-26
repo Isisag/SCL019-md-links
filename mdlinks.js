@@ -22,8 +22,8 @@ function welcomeUser(answer) {
   }
   welcome();
   
-  let interface = readline.createInterface(stdin, stdout);
-  interface.question("Ingresa la ruta para evaluar => ".blue.bold, function (answer) {
+  let rl = readline.createInterface(stdin, stdout);
+  rl.question("Ingresa la ruta para evaluar => ".blue.bold, function (answer) {
       // evaluamos si la ruta existe o no // exitsSync evalua tanto absoluto como realtivo
         if (!existsSync(answer)) {
           stdout.write("No es una ruta válida".red);
@@ -41,7 +41,26 @@ function welcomeUser(answer) {
               console.log('este archivo no contiene links'.red)
               else{
               console.log(mdFile = mdFile.match(regex) ); // array con links
-              console.log(mdFile.length)  // cuantos links hay
+              mdFile.forEach( link => {
+                
+                link = new URL(link)
+                // inicio
+                const req = https.request(link.href, (res) => {
+                  console.log(
+                    link.href, 
+                    'statusCode:'.magenta, 
+                    res.statusCode
+                    );
+                });
+                req.on('error', (e) => {
+                  console.error(e);
+                });
+                req.end();
+
+                // fin
+
+              })
+              console.log('Links Encontrados  '.yellow + mdFile.length)
             }
       } else {
         // si es un directorio leelo y saca los archivos que contengan una extension .md
@@ -65,44 +84,37 @@ function welcomeUser(answer) {
               else {
               file = file.match(regex) 
               console.log(file);  // array con links
-              console.log(file.length)  // cuantos links hay
 
-                const req = https.request(file[1], (res) => {
-                  console.log( file[1] + 'statusCode:', res.statusCode);
+              file.forEach( link => {
+                
+                link = new URL(link)
+                // inicio
+                const req = https.request(link.href, (res) => {
+                  console.log(link.href, 'statusCode:'.magenta, res.statusCode );
                 });
                 req.on('error', (e) => {
                   console.error(e);
                 });
                 req.end();
 
-              // file.forEach( link => {
-                
-              //   link = new URL(link)
-              //   console.log(typeof(link))
-              //   console.log(link.href)
+                // fin
 
-              //   // inicio
-              //   const req = https.request(link.href, (res) => {
-              //     console.log('statusCode:', res.statusCode);
-              //   });
-              //   req.on('error', (e) => {
-              //     console.error(e);
-              //   });
-              //   req.end();
-
-              //   // fin
-
-              // })
-
+              })
+              console.log('Links Encontrados  '.yellow + file.length)  // cuantos links hay
+              
             }
           }
         })
       }
       //acaba el programa!
-      interface.close();
+      rl.close();
     }
   );
 }
+
+function execute(){
+  welcomeUser()
+}execute()
 
 module.exports = {
   welcomeUser,

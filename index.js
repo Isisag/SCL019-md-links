@@ -4,7 +4,7 @@ module.exports = () => {
 
 const colors = require('colors');
 const fs = require('fs');
-const { welcomeUser} = require('./user.js');
+const { welcomeUser} = require('./fail/user.js');
 const process = require('process')
 const {exit} = process
 const path = require('path');
@@ -41,7 +41,7 @@ function mdLinks( path , options ){
             let mdFile = readMdFile(path)
             if(mdFile.includes('http','https')){
               let arrayLinks = mdFile.match(regex)
-              validateStatus(arrayLinks);
+              validateStatus(arrayLinks, path);
             }else{
               console.log('Este archivo no contiene links'.red)
             };
@@ -57,6 +57,10 @@ function mdLinks( path , options ){
   });
 } 
 mdLinks();
+
+module.exports = {
+  mdLinks
+};
 
 
 

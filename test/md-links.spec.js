@@ -1,11 +1,10 @@
 // const mdLinks = require('../');
-// import {exitsPath,pathExt,resolvePath,readMdFile,validateStatus} from '../functions.js'
-const {resolvePath, exitsPath,pathExt} = require('../functions.js')
+const {resolvePath, exitsPath,pathExt, readMdFile} = require('../functions.js')
 
 // describe('mdLinks', () => {
 
-//   it('should...', () => {
-//     console.log('FIX ME!');
+//   it('should be a function', () => {
+//    console.log('A')
 //   });
 
 // });
@@ -26,7 +25,7 @@ describe('exitsPath', () => {
   });
   it('should return an string', () =>{
     const path = "test.md"
-    expect(exitsPath(path)).toBe(true)
+    expect(exitsPath(path)).toBe(false)
   })
 });
 
@@ -43,4 +42,15 @@ describe('pathExt', () => {
     expect(pathExt(path)).toBe(false)
   })
 });
+
+describe('readMdFile', () => {
+  it('should be a function', () => {
+    expect(typeof readMdFile).toBe('function')
+  });
+  it('should return an string', () =>{
+    const path = "test.md"
+    expect(readMdFile(path)).toBe(String)
+  })
+});
+
 

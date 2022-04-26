@@ -17,26 +17,16 @@ const resolvePath = (path) => {
     //? hay un error ya que al momento de hacer join por la forma de que yo llame los archivos no lo reconoce
     // path = join(path ,process.argv[3],process.argv[4]) 
     // console.log(join(path, process.argv[3], process.argv[4]))
-    console.log(typeof(path))
-    return console.log(path)
+    path
   }
   else {
     path = resolve(path)
-    console.log(typeof(path))
-    return (path);
+     path;
   }
+  return path
 }
 
 const exitsPath = (path) => existsSync(path) // ? console.log('si existe') : console.log('no existe')
-// const exitsPath = (path) => {
-//   fs.access(path, fs.R_OK, (err) => {
-//     if (err) {
-//     console.error(err)
-//     return
-//     }
-//   })
-// }
-
 
 const pathExt = (path) => extname(path) === ".md";
 
@@ -44,8 +34,10 @@ const readMdFile = (path) => {
   return readFileSync(path, "utf8");
 };
 
-
-const validateStatus = (array) => {
+const validateStatus = (array, path) => {
+  let otroarray = []
+  let objectLinks = new Object();
+  
   const linksValidate = array.map((link) => {
     return new Promise((resolve, reject) => {
       let req;
@@ -54,21 +46,45 @@ const validateStatus = (array) => {
         req = https.request(link, (res) => {
           status = res.statusCode;
           if (status >= 200 || status <= 399) {
-            // console.log(link + ` ok ${status}`.blue);
+            let objeto = {
+              href : link,
+              status : 'OK',
+              path : path,
+            }
+            otroarray.push(objeto)
+            console.log(otroarray)
           }
         });
         req.on("error", (e) => {
-          console.log(link + "  is Broken".red);
+          let objeto = {
+            href : link,
+            status : 'Broken',
+            path : path,
+          }
+          otroarray.push(objeto)
+          console.log(otroarray)
         });
       } else {
         req = http.request(link, (res) => {
           status = res.statusCode;
           if (status >= 200 || status <= 399) {
-            // console.log(link + ` ok ${status}`.blue);
+            let objeto = {
+              href : link,
+              status : 'OK',
+              path : path,
+            }
+            otroarray.push(objeto)
+            console.log(otroarray)
           }
         });
         req.on("error", (e) => {
-          console.log(link + "  is Broken".red);
+          let objeto = {
+            href : link,
+            status : 'Broken',
+            path : path,
+          }
+          otroarray.push(objeto)
+          console.log(otroarray)
         });
       }
       resolve(req);
@@ -78,6 +94,7 @@ const validateStatus = (array) => {
   });
   Promise.all(linksValidate);
 };
+
 
 module.exports = {
   exitsPath,
