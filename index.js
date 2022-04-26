@@ -10,7 +10,7 @@ const {exit} = process
 const path = require('path');
 const {readdir} = path;
 
-const { resolvePath,pathExt, readMdFile, exitsPath, validateStatus} = require('./functions.js');
+const { resolvePath,pathExt, readMdFile, exitsPath, validateStatus } = require('./functions.js');
 
 // todo -1) recibir input del usuario y guardarla en una variable
 // todo -3) evaluar que ese input sea una ruta 
@@ -28,22 +28,22 @@ const options = {}
 function mdLinks( path , options ){
 
     console.log(process.argv)
-    console.log(process.argv[2])
+    // console.log(process.argv[2])
+    // let arg1 = process.argv[2]
+    // let arg2 = process.argv[3]
+    // let arg3 = process.argv[4]
 
     path = process.argv[2]
-    // hay que usar join  para hacerla absoluta :D 
-  return new Promise((resolve) => {
-    //validar si existe la ruta
+    return new Promise((resolve) => {
+    resolvePath(path)
     if(exitsPath(path)){
         if(pathExt(path)){
-            // si era rel , resulve la ruta
-            resolvePath(path)
             let mdFile = readMdFile(path)
             if(mdFile.includes('http','https')){
               let arrayLinks = mdFile.match(regex)
               validateStatus(arrayLinks);
             }else{
-              console.log('Este archivo no conteiene links'.red)
+              console.log('Este archivo no contiene links'.red)
             };
         }
         else{

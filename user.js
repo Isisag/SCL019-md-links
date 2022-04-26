@@ -116,6 +116,8 @@ module.exports = {
   welcomeUser,
 };
 
+
+
 // Funcion que obtiene el estatus del Link
 // const linkStatus = (link) => {
 //   return new Promise((resolve, rejects) => {
